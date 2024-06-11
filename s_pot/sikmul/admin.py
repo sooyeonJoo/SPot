@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import BloomingSeason, Calender, CultivationSeason, DjangoMigrations, HarvestingSeason, Plants, PlantsInfo, User
+from .models import BloomingSeason, Calender, CultivationSeason,  HarvestingSeason, Plants, PlantsInfo, User
 
 @admin.register(BloomingSeason)
 class BloomingSeasonAdmin(admin.ModelAdmin):
@@ -13,9 +13,6 @@ class CalenderAdmin(admin.ModelAdmin):
 class CultivationSeasonAdmin(admin.ModelAdmin):
     list_display = ('plantsid', 'engname', 'season')
 
-@admin.register(DjangoMigrations)
-class DjangoMigrationsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'app', 'name', 'applied')
 
 @admin.register(HarvestingSeason)
 class HarvestingSeasonAdmin(admin.ModelAdmin):

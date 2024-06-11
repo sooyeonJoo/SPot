@@ -41,17 +41,6 @@ class CultivationSeason(models.Model):
         db_table = 'cultivation_season'
 
 
-class DjangoMigrations(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    app = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    applied = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_migrations'
-
-
 class HarvestingSeason(models.Model):
     plantsid = models.CharField(db_column='plantsId', primary_key=True, max_length=50)  # Field name made lowercase.
     engname = models.ForeignKey('PlantsInfo', models.DO_NOTHING, db_column='engname', blank=True, null=True)
@@ -100,7 +89,8 @@ class User(models.Model):
     passwd = models.CharField(max_length=20, blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
-    gender = models.CharField(max_length=30, blank=True, null=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    tel = models.CharField(max_length=30, blank=True, null=True)
     email = models.CharField(max_length=40, blank=True, null=True)
 
     class Meta:
