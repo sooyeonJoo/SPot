@@ -79,7 +79,7 @@ DATABASES = {
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'spot',
+        'NAME': 'spotdb',
         'USER': 'root',
         'PASSWORD': 'HYWU',
         'HOST': '127.0.0.1',
