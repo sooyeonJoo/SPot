@@ -1,3 +1,4 @@
+
 import os
 import django
 import sys
@@ -16,7 +17,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
 
-def crawl_and_save_plant():
+def crawl_and_save_plant(plant_name):
     driver = webdriver.Chrome()
     driver.get('https://www.picturethisai.com/ko/')
     time.sleep(3)  # 페이지가 완전히 로딩되도록 3초 동안 기다림
@@ -27,9 +28,10 @@ def crawl_and_save_plant():
     time.sleep(3)
 
     # 식물 이름 입력 받아 검색하기
-    plant = input('식물 이름을 입력하세요\n')
+    #plant = input('식물 이름을 입력하세요\n')
+    #plant = plant_name
     search_box = driver.find_element(By.ID, 'search')
-    search_box.send_keys(plant)
+    search_box.send_keys(plant_name)
     search_box.send_keys(Keys.RETURN)  # 엔터
     time.sleep(3)
 
@@ -46,7 +48,7 @@ def crawl_and_save_plant():
     # 사용자 입력 식물과 동일한 식물이 있는지 확인 후 인덱스 뽑기
     num = -1
     for i in search_plants_list:
-        if i == plant:
+        if i == plant_name:
             num = search_plants_list.index(i)
             break
     else:
@@ -86,7 +88,7 @@ def crawl_and_save_plant():
         name=myplant["name"],
         engname=myplant["nameE"],
         lifespan=myplant["lifespan"],
-        sepecies=myplant["species"],
+        species=myplant["species"],
         cultivation_season=myplant["cultivation_season"],
         blooming_season=myplant["blooming_season"],
         harvesting_season=myplant["harvesting_season"],
@@ -100,6 +102,10 @@ def crawl_and_save_plant():
     print(f"{myplant['name']} 데이터베이스에 저장 완료.")
 
     driver.quit()
+    return myplant
 
+'''
 if __name__ == "__main__":
-    crawl_and_save_plant()
+    plant_name = input('식물 이름을 입력하세요\n')
+    crawl_and_save_plant(plant_name)
+'''

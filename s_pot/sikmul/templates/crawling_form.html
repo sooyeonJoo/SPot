@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>식물 크롤링</title>
+</head>
+<body>
+    <h1>식물 크롤링</h1>
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <label for="plant_name">식물 이름:</label>
+        <input type="text" id="plant_name" name="plant_name">
+        <button type="submit">크롤링 시작</button>
+    </form>
+    
+</body>
+</html>

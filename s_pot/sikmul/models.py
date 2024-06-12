@@ -40,6 +40,7 @@ class PlantsInfo(models.Model):
     name = models.CharField(primary_key=True, max_length=50)
     engname = models.CharField(max_length=50, blank=True, null=True)
     lifespan = models.CharField(max_length=50, blank=True, null=True)
+    sunlight = models.CharField(max_length=50, blank=True, null=True)
     species = models.CharField(max_length=50, blank=True, null=True)
     blooming_season = models.CharField(max_length=100, blank=True, null=True)
     cultivation_season = models.CharField(max_length=100, blank=True, null=True)

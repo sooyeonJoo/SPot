@@ -22,4 +22,6 @@ urlpatterns = [
   
     path('admin/', admin.site.urls),
     path('', views.sikmul),
+    path('crawling/', views.crawling_view, name='crawling'),
+    path('success/', views.success_view, name='success'),
 ]
