@@ -1,4 +1,3 @@
-
 import os
 import django
 import sys
@@ -103,9 +102,3 @@ def crawl_and_save_plant(plant_name):
 
     driver.quit()
     return myplant
-
-'''
-if __name__ == "__main__":
-    plant_name = input('식물 이름을 입력하세요\n')
-    crawl_and_save_plant(plant_name)
-'''
