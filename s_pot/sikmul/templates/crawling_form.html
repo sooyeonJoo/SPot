@@ -1,21 +1,21 @@
+<!-- templates/crawling_form.html -->
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>식물 크롤링</title>
+    <title>Plant Crawling</title>
 </head>
 <body>
-    <h1>식물 크롤링</h1>
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
+    <h1>Enter Plant Name to Crawl</h1>
     <form method="post">
         {% csrf_token %}
-        <label for="plant_name">식물 이름:</label>
-        <input type="text" id="plant_name" name="plant_name">
-        <button type="submit">크롤링 시작</button>
+        <input type="text" name="plant_name" placeholder="Enter plant name">
+        <button type="submit">Crawl</button>
     </form>
-    
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    {% if message %}
+        <p style="color: green;">{{ message }}</p>
+    {% endif %}
 </body>
 </html>
