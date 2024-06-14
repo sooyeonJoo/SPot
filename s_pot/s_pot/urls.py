@@ -19,12 +19,7 @@ from django.urls import path
 from sikmul import views
 
 urlpatterns = [
-  
     path('admin/', admin.site.urls),
     path('crawler_api/', views.crawler_api_view, name='crawler_api'),
 ]
-'''
-    path('', views.sikmul),
-    path('crawling/', views.crawling_view, name='crawling'),
-    path('success/', views.success_view, name='success'),
-'''
+

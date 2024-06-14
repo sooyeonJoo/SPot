@@ -1,19 +1,15 @@
-# from django.shortcuts import render, redirect
-# from django.http import HttpResponse
 from django.http import JsonResponse
 from .crawler import crawl_and_save_plant
+from .models import PlantsInfo
 import json
 from django.views.decorators.csrf import csrf_exempt
 
-
-# Create your views here.
 @csrf_exempt
 def crawler_api_view(request):
     print("요청 도착")
     if request.method == 'POST':
         try:
-            print(f"Request body: {request.body}")  # 요청 본문 출력
-            data = json.loads(request.body.decode('utf-8'))  # 바이너리 데이터를 문자열로 디코딩
+            data = json.loads(request.body.decode('utf-8'))  # 요청 바디를 JSON으로 디코딩
             print(f"Received data: {data}")
 
             # 데이터 형식이 리스트인 경우 처리
@@ -21,14 +17,20 @@ def crawler_api_view(request):
                 plant_name = data[0]  # 리스트의 첫 번째 요소를 가져옴
             else:
                 return JsonResponse({'error': 'Invalid data format or empty list'}, status=400)
-            
-            # 데이터 형식이 딕셔너리인 경우 처리
+
+            # 가져온 데이터가 문자열인 경우 처리
             if isinstance(plant_name, str):
                 result = crawl_and_save_plant(plant_name)
                 if result is None:
                     return JsonResponse({'error': '해당 식물이 없습니다.'}, status=404)
                 
-                return JsonResponse(result, status=200)
+                # 데이터베이스에서 크롤링된 식물 정보 다시 조회
+                crawled_data = PlantsInfo.objects.filter(name=plant_name).values()
+                data_list = list(crawled_data)
+                if data_list:
+                    return JsonResponse(data_list[0], safe=False, status=200)
+                else:
+                    return JsonResponse({'error': '해당 식물 정보를 데이터베이스에서 찾을 수 없습니다.'}, status=404)
             else:
                 return JsonResponse({'error': 'Invalid plant_name format'}, status=400)
         except json.JSONDecodeError:

@@ -17,6 +17,12 @@ from selenium.webdriver.common.by import By
 import time
 
 def crawl_and_save_plant(plant_name):
+
+    existing_plant = PlantsInfo.objects.filter(name=plant_name).first()
+    if existing_plant:
+        print(f"{plant_name} 데이터베이스에서 발견됨.")
+        return existing_plant
+    
     driver = webdriver.Chrome()
     driver.get('https://www.picturethisai.com/ko/')
     time.sleep(3)  # 페이지가 완전히 로딩되도록 3초 동안 기다림
