@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plant Detail</title>
+</head>
+<body>
+    <h1>{{ plant.name }} Details</h1>
+    <p><strong>English Name:</strong> {{ plant.engname }}</p>
+    <p><strong>Lifespan:</strong> {{ plant.lifespan }}</p>
+    <p><strong>Species:</strong> {{ plant.species }}</p>
+    <p><strong>Cultivation Season:</strong> {{ plant.cultivation_season }}</p>
+    <p><strong>Blooming Season:</strong> {{ plant.blooming_season }}</p>
+    <p><strong>Harvesting Season:</strong> {{ plant.harvesting_season }}</p>
+    <p><strong>Temperature:</strong> {{ plant.temperature }}</p>
+    <p><strong>Sunlight:</strong> {{ plant.sunlight }}</p>
+    <p><strong>Watering Frequency:</strong> {{ plant.watering_frequency }}</p>
+    <p><strong>Pests and Diseases:</strong> {{ plant.pests_diseases }}</p>
+    <a href="{% url 'crawling' %}">Back</a>
+</body>
+</html>

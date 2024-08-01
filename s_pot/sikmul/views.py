@@ -4,6 +4,7 @@ from .models import PlantsInfo
 import json
 from django.views.decorators.csrf import csrf_exempt
 
+
 @csrf_exempt
 def crawler_api_view(request):
     print("요청 도착")

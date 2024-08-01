@@ -18,6 +18,7 @@ import time
 
 def crawl_and_save_plant(plant_name):
 
+    # 데이터베이스에 해당 식물이 이미 존재할 경우 리턴
     existing_plant = PlantsInfo.objects.filter(name=plant_name).first()
     if existing_plant:
         print(f"{plant_name} 데이터베이스에서 발견됨.")
@@ -33,8 +34,6 @@ def crawl_and_save_plant(plant_name):
     time.sleep(3)
 
     # 식물 이름 입력 받아 검색하기
-    #plant = input('식물 이름을 입력하세요\n')
-    #plant = plant_name
     search_box = driver.find_element(By.ID, 'search')
     search_box.send_keys(plant_name)
     search_box.send_keys(Keys.RETURN)  # 엔터
