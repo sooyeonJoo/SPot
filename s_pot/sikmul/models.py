@@ -8,9 +8,9 @@
 from django.db import models
 
 
-class Calender(models.Model):
-    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userId', blank=True, null=True)  # Field name made lowercase.
-    plantsid = models.IntegerField(db_column='plantsId', primary_key=True)  # Field name made lowercase.
+class Calendar(models.Model):
+    calendarid = models.AutoField(db_column='calendarId', primary_key=True)
+    plantsid = models.ForeignKey('Plants', models.DO_NOTHING, db_column='plantsId')
     event_date = models.DateField(blank=True, null=True)
     title = models.CharField(max_length=50, blank=True, null=True)
     detail = models.CharField(max_length=100, blank=True, null=True)
@@ -18,12 +18,13 @@ class Calender(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'calender'
-        verbose_name_plural = 'calender'
+        db_table = 'calendar'
+        verbose_name_plural = 'calendar'
 
 
 class Plants(models.Model):
-    plantsid = models.AutoField(primary_key=True)
+    plantsid = models.AutoField(db_column='plantsId', primary_key=True)
+    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userId', blank=True, null=True)
     name = models.ForeignKey('PlantsInfo', models.DO_NOTHING, db_column='name', blank=True, null=True)
     nickname = models.CharField(max_length=100, blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
@@ -33,7 +34,7 @@ class Plants(models.Model):
     class Meta:
         managed = False
         db_table = 'plants'
-        verbose_name_plural = 'plants'
+        verbose_name_plural = 'plants'        
 
 
 class PlantsInfo(models.Model):
@@ -56,7 +57,7 @@ class PlantsInfo(models.Model):
 
 
 class User(models.Model):
-    userid = models.IntegerField(db_column='userId', primary_key=True)  # Field name made lowercase.
+    userid = models.AutoField(db_column='userId', primary_key=True)
     id = models.CharField(max_length=50, blank=True, null=True)
     passwd = models.CharField(max_length=50, blank=True, null=True)
     name = models.CharField(max_length=50, blank=True, null=True)
