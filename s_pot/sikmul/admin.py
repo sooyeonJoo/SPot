@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Calender, Plants, PlantsInfo, User
+from .models import Calendar, Plants, PlantsInfo, User
 
-@admin.register(Calender)
+@admin.register(Calendar)
 class CalenderAdmin(admin.ModelAdmin):
-    list_display = ('plantsid', 'userid', 'event_date', 'title', 'detail', 'user')
+    list_display = ('calendarid','plantsid', 'user', 'event_date', 'title', 'detail')
 
 @admin.register(Plants)
 class PlantsAdmin(admin.ModelAdmin):
@@ -15,4 +15,4 @@ class PlantsInfoAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-     list_display = ('userid', 'id', 'passwd', 'name', 'birthday', 'gender', 'tel','email')
+    list_display = ('userid', 'id', 'passwd', 'name', 'birthday', 'gender', 'tel','email')
