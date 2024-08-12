@@ -15,6 +15,7 @@ class Calendar(models.Model):
     title = models.CharField(max_length=50, blank=True, null=True)
     detail = models.CharField(max_length=100, blank=True, null=True)
     user = models.CharField(max_length=50, blank=True, null=True)
+    wateringdate = models.ForeignKey('Wateringcalendar', models.DO_NOTHING, db_column='wateringDate', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -70,3 +71,28 @@ class User(models.Model):
         managed = False
         db_table = 'user'
         verbose_name_plural = 'user'
+
+
+class Wateringcalendar(models.Model):
+    plantid = models.ForeignKey(Plants, models.DO_NOTHING, db_column='plantId')  # Field name made lowercase.
+    userid = models.ForeignKey(User, models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
+    date = models.DateField(primary_key=True)  # The composite primary key (date, plantId, userId) found, that is not supported. The first column is selected.
+
+    class Meta:
+        managed = False
+        db_table = 'wateringcalendar'
+        unique_together = (('date', 'plantid', 'userid'),)
+        verbose_name_plural = 'wateringcalendar'
+
+
+
+class Wateringschedule(models.Model):
+    plantid = models.ForeignKey(Plants, models.DO_NOTHING, db_column='plantId')  # Field name made lowercase.
+    userid = models.ForeignKey(User, models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
+    date = models.DateField(primary_key=True)  # The composite primary key (date, userId, plantId) found, that is not supported. The first column is selected.
+
+    class Meta:
+        managed = False
+        db_table = 'wateringschedule'
+        unique_together = (('date', 'userid', 'plantid'),)
+        verbose_name_plural = 'wateringschedule'
