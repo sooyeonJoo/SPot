@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 's_pot.settings')
 django.setup()
 
-from sikmul.models import PlantsInfo
+from mobiles.models import PlantsInfo
 import requests  
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
