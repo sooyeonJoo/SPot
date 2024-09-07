@@ -18,6 +18,7 @@ import time
 
 def crawl_and_save_plant(plant_name):
 
+    try:
     # 데이터베이스에 해당 식물이 이미 존재할 경우 리턴
     existing_plant = PlantsInfo.objects.filter(name=plant_name).first()
     if existing_plant:

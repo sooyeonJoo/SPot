@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'mobiles',
     'pots',
     'schedules',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
