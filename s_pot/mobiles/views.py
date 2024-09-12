@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 @csrf_exempt
-def crawler_api_view(request):
+def crawler_api(request):
     print("요청 도착")
     if request.method == 'POST':
         try:
