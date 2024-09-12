@@ -1,6 +1,6 @@
 from django.urls import path
-from django.views.generic import TemplateView
+from .views import crawler_api_view
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='crawling_form.html'), name='crawling_form'),
+    path('crawler/', crawler_api_view, name='crawler_api'),
 ]
