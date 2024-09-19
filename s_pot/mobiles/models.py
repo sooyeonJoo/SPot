@@ -31,6 +31,7 @@ class Plants(models.Model):
     birthday = models.DateField(blank=True, null=True)
     deathday = models.DateField(blank=True, null=True)
     color = models.CharField(max_length=100, blank=True, null=True)
+    wateringInterval = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False

@@ -7,7 +7,7 @@ class CalenderAdmin(admin.ModelAdmin):
 
 @admin.register(Plants)
 class PlantsAdmin(admin.ModelAdmin):
-    list_display = ('plantsid', 'name', 'nickname', 'birthday', 'deathday', 'color')
+    list_display = ('plantsid', 'name', 'nickname', 'birthday', 'deathday', 'color','wateringInterval')
 
 @admin.register(PlantsInfo)
 class PlantsInfoAdmin(admin.ModelAdmin):

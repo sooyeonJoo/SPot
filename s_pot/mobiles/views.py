@@ -2,12 +2,11 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .crawler import crawl_and_save_plant
 
-@api_view(['POST'])
-def crawler_api_view(requset):
-    palnt_name = requset.data.get('name')
-    if not palnt_name:
-        return JsonResponse({'error' : 'No plant name provided'}, staus=400)
-
+@api_view(['GET'])
+def crawler_api_view(request):
+    plant_name = request.query_params.get('name')  # 'name'을 query parameter로 받음
+    if not plant_name:
+        return JsonResponse({'error': 'No plant name provided'}, status=400)
 
     plant_info = crawl_and_save_plant(plant_name)
     if plant_info:
