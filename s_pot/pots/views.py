@@ -1,8 +1,11 @@
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import HttpResponse
 import requests
 
+
 # Create your views here.
+@csrf_exempt  # CSRF 검증 비활성화
 def control_pump(request):
     # 펌프
     if request.method == 'POST':
