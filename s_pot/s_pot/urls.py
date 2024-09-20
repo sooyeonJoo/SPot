@@ -15,11 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from mobiles import views
+from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('crawler_api/', views.crawler_api_view, name='crawler_api'),
+    path('api/', include('mobiles.urls')),  # 'mobiles' 앱의 URLs를 포함
+    # 추가적인 URL 패턴이 필요하면 여기에 추가
 ]
 

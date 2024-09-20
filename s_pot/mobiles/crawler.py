@@ -1,116 +1,94 @@
-import os
-import django
-import sys
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
-
-# Django settings 모듈 설정
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 's_pot.settings')
-django.setup()
-
-from mobiles.models import Plants, PlantsInfo
-import requests  
+import logging
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
+from .models import PlantsInfo  # Django 데이터베이스 모델
+
+# 로거 설정
+logger = logging.getLogger(__name__)
 
 def crawl_and_save_plant(plant_name):
+    # 크롬 웹 드라이버 실행
+    driver = webdriver.Chrome()
+    driver.get('https://www.picturethisai.com/ko/')
+    time.sleep(3)
+
+    # 검색 버튼 클릭
+    search_button = driver.find_element(By.CLASS_NAME, 'header-wrap-top-main-content-search-wrap')
+    search_button.click()
+    time.sleep(3)
+
+    # 검색 창에 식물 이름 입력
+    search_box = driver.find_element(By.ID, 'search')
+    search_box.send_keys(plant_name)
+    search_box.send_keys(Keys.RETURN)
+    time.sleep(3)
+
+    # 페이지의 HTML 파싱
+    html_text = driver.page_source
+    html = bs(html_text, 'html.parser')
+
+    # 검색된 식물 목록 추출
+    search_plants = html.select('div.pcsearch_contentblock_commonNames')
+    search_plants_list = [search_plant.get_text().strip() for search_plant in search_plants]
+
+    # 검색어와 일치하는 식물 찾기
+    num = -1
+    for i in search_plants_list:
+        if i == plant_name:
+            num = search_plants_list.index(i)
+            break
+
+    # 식물이 없으면 종료
+    if num == -1:
+        logger.info(f"Plant '{plant_name}' not found on the website.")
+        return None
+
+    # 해당 인덱스의 식물 클릭
+    content_box = driver.find_elements(By.CLASS_NAME, 'pcsearch_contentblock_commonNames')[num]
+    content_box.click()
+
+    # 상세 페이지의 HTML 파싱
+    time.sleep(3)
+    html2_text = driver.page_source
+    html2 = bs(html2_text, 'html.parser')
+
+    # 식물 정보 크롤링하여 딕셔너리에 저장
+    plant_info = {
+        "name": html2.select_one('div.basic-information-prefer-name').get_text(strip=True) if html2.select_one('div.basic-information-prefer-name') else "정보 없음",
+        "engname": html2.select_one('div.basic-information-latin-name').get_text(strip=True) if html2.select_one('div.basic-information-latin-name') else "정보 없음",
+        "lifespan": html2.select('div.plant-info-field-item-text')[0].get_text(strip=True) if len(html2.select('div.plant-info-field-item-text')) > 0 else "정보 없음",
+        "species": html2.select('div.plant-info-field-item-text')[1].get_text(strip=True) if len(html2.select('div.plant-info-field-item-text')) > 1 else "정보 없음",
+        "cultivation_season": html2.select('div.plant-info-field-item-text')[2].get_text(strip=True) if len(html2.select('div.plant-info-field-item-text')) > 2 else "정보 없음",
+        "blooming_season": html2.select('div.plant-info-field-item-text')[3].get_text(strip=True) if len(html2.select('div.plant-info-field-item-text')) > 3 else "정보 없음",
+        "harvesting_season": html2.select('div.plant-info-field-item-text')[4].get_text(strip=True) if len(html2.select('div.plant-info-field-item-text')) > 4 else "정보 없음",
+        "temperature": html2.select('div.plant-info-field-item-text')[10].get_text(strip=True) if len(html2.select('div.plant-info-field-item-text')) > 10 else "정보 없음",
+        "sunlight": html2.select('div.basic-information-item-content-title')[1].get_text(strip=True) if len(html2.select('div.basic-information-item-content-title')) > 1 else "정보 없음",
+        "watering_frequency": html2.select('div.basic-information-item-content-title')[0].get_text(strip=True) if len(html2.select('div.basic-information-item-content-title')) > 0 else "정보 없음",
+        "pests_diseases": ", ".join([item.get_text(strip=True) for item in html2.select('div.diseases-basic-information-title')[:4]]) if len(html2.select('div.diseases-basic-information-title')) > 0 else "정보 없음"
+    }
+
+    # 크롤링한 정보를 데이터베이스에 저장
+    plant_info_db = PlantsInfo(
+        name=plant_info['name'],
+        engname=plant_info['engname'],
+        lifespan=plant_info['lifespan'],
+        species=plant_info['species'],
+        cultivation_season=plant_info['cultivation_season'],
+        blooming_season=plant_info['blooming_season'],
+        harvesting_season=plant_info['harvesting_season'],
+        temperature=plant_info['temperature'],
+        sunlight=plant_info['sunlight'],
+        watering_frequency=plant_info['watering_frequency'],
+        pests_diseases=plant_info['pests_diseases']
+    )
+
     try:
-        # 데이터베이스에 해당 식물이 이미 존재할 경우 리턴
-        existing_plant_info = PlantsInfo.objects.filter(name=plant_name).first()
-        if existing_plant_info:
-            print(f"{plant_name} 데이터베이스에서 발견됨.")
-            return existing_plant_info
-
-        driver = webdriver.Chrome()
-        driver.get('https://www.picturethisai.com/ko/')
-        time.sleep(3)  # 페이지가 완전히 로딩되도록 3초 동안 기다림
-
-        # 검색 버튼 클릭해 검색창 열기
-        search_button = driver.find_element(By.CLASS_NAME, 'header-wrap-top-main-content-search-wrap')
-        search_button.click()
-        time.sleep(3)
-
-        # 식물 이름 입력 받아 검색하기
-        search_box = driver.find_element(By.ID, 'search')
-        search_box.send_keys(plant_name)
-        search_box.send_keys(Keys.RETURN)  # 엔터
-        time.sleep(3)
-
-        # 현재 페이지의 HTML 가져오기 (동적)
-        html_text = driver.page_source
-        html = bs(html_text, 'html.parser')
-
-        # 검색하여 나온 식물들 모두 배열에 넣기
-        search_plants = html.select('div.pcsearch_contentblock_commonNames')
-        search_plants_list = [search_plant.get_text().strip() for search_plant in search_plants]
-
-        # 사용자 입력 식물과 동일한 식물이 있는지 확인 후 인덱스 뽑기
-        num = -1
-        if plant_name in search_plants_list:
-            num = search_plants_list.index(plant_name)
-        else:
-            print("해당 식물이 없습니다.")
-            driver.quit()
-            return
-
-        # 해당 인덱스를 가진 식물 클릭하기
-        content_box = driver.find_elements(By.CLASS_NAME, 'pcsearch_contentblock_commonNames')[num]
-        content_box.click()
-
-        url = driver.current_url
-        response = requests.get(url)
-        response.encoding = 'utf-8'
-        html2_text = response.text
-        html2 = bs(html2_text, 'html.parser')
-
-        # 크롤링하여 딕셔너리에 저장
-        myplant = {
-            "name": html2.select_one('div.basic-information-prefer-name').get_text().strip(),
-            "nameE": html2.select_one('div.basic-information-latin-name').get_text().strip(),
-            "lifespan": html2.select('div.plant-info-field-item-text')[0].get_text().strip(),
-            "species": html2.select('div.plant-info-field-item-text')[1].get_text().strip(),
-            "cultivation_season": html2.select('div.plant-info-field-item-text')[2].get_text().strip(),
-            "blooming_season": html2.select('div.plant-info-field-item-text')[3].get_text().strip(),
-            "harvesting_season": html2.select('div.plant-info-field-item-text')[4].get_text().strip(),
-            "temperature": html2.select('div.plant-info-field-item-text')[10].get_text().strip(),
-            "sunlight": html2.select('div.basic-information-item-content-title')[1].get_text().strip(),
-            "watering_frequency": html2.select('div.basic-information-item-content-title')[0].get_text().strip(),
-            "pests_and_diseases": ", ".join([values.get_text().strip() for values in html2.select('div.diseases-basic-information-title')[:4]])
-        }
-
-        # PlantsInfo 모델 인스턴스 생성 및 데이터베이스에 저장
-        plant_info_instance = PlantsInfo(
-            name=myplant["name"],
-            engname=myplant["nameE"],
-            lifespan=myplant["lifespan"],
-            species=myplant["species"],
-            cultivation_season=myplant["cultivation_season"],
-            blooming_season=myplant["blooming_season"],
-            harvesting_season=myplant["harvesting_season"],
-            temperature=myplant["temperature"],
-            sunlight=myplant["sunlight"],
-            watering_frequency=myplant["watering_frequency"],
-            pests_diseases=myplant["pests_and_diseases"]
-        )
-        plant_info_instance.save()
-
-        # Plants 모델 인스턴스 생성 및 데이터베이스에 저장
-        plant_instance = Plants(
-            name=plant_info_instance,  # ForeignKey 필드에 해당 모델 인스턴스를 설정
-            nickname="",  # 필요에 따라 nickname 등을 설정
-            birthday=None,
-            deathday=None,
-            color=""
-        )
-        plant_instance.save()
-
-        print(f"{myplant['name']} 데이터베이스에 저장 완료.")
-
+        plant_info_db.save()  # 데이터베이스에 저장
+        logger.info(f"Plant '{plant_name}' data scraped and saved to database.")
+        return plant_info  # 저장한 정보를 반환
     except Exception as e:
-        print(f"오류 발생: {e}")
-
-    finally:
-        driver.quit()
+        logger.error(f"Error saving plant info to database: {e}")
+        return None

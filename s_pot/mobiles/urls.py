@@ -1,7 +1,6 @@
 from django.urls import path
-from .views import crawler_api_view
+from . import views
 
 urlpatterns = [
-    path('crawler/', crawler_api_view, name='crawler_api'),
-
+   path('plants/<str:plant_name>/', views.crawl_plant_info, name='crawl_plant_info'),
 ]
