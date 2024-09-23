@@ -88,9 +88,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'spotdb',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'HYWU',
         'HOST': '127.0.0.1',
-        'PORT':'3306',
+        'PORT':'3309',
     }
 }
 
