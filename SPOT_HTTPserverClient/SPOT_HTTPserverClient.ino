@@ -8,6 +8,7 @@ const char* ssid = "JIUS22+WB";
 const char* password = "19940322";
 
 WebServer server(80);
+String serverIP = "";
 
 const int led = LED_BUILTIN;
 const int sensorPin = 34;
@@ -63,7 +64,7 @@ void handleURI() {
 void sendSensorData() {
   HTTPClient http;
   int sensorValue = analogRead(sensorPin);  // 센서 값 읽기
-  http.begin("http://192.168.100.231:8000/pots/control_sensorData/");  // Django URL
+  http.begin("http://" + serverIP + ":8000/pots/control_sensorData/");  // Django URL
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");  // POST 요청 시 헤더 설정
 
   // POST 요청으로 센서 값 전송
@@ -133,6 +134,11 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
+  // 서버 IP 입력 요청
+  Serial.println("Enter server IP: ");
+  while (Serial.available() == 0) {}  // 입력 대기
+  serverIP = Serial.readString();  // IP 주소 읽기
+  
   if (MDNS.begin("esp32")) {
     Serial.println("MDNS responder started");
   }

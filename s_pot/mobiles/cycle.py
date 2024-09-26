@@ -22,7 +22,7 @@ def create_watering_schedule():
     start_date = datetime.strptime(start_date_input, "%Y-%m-%d").date()
 
     try:
-        plant = Plants.objects.get(nickname=plant_name)
+        plant = Plant   s.objects.get(nickname=plant_name)
     except Plants.DoesNotExist:
         print("식물을 찾을 수 없습니다.")
         return
