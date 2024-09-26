@@ -2,15 +2,15 @@
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
-
 #include <HTTPClient.h>
 
-const char* ssid = "wifi_19-310";
-const char* password = "wifi19310";
+const char* ssid = "JIUS22+WB";
+const char* password = "19940322";
 
 WebServer server(80);
 
 const int led = LED_BUILTIN;
+const int sensorPin = 34;
 
 bool request = false;
 
@@ -60,12 +60,22 @@ void handleURI() {
 
 }
 
-void handleSensor() {
-  
-  digitalWrite(led, LOW);
-  server.send(200, "text/plain", "Value = " + String(analogRead(34))); 
-  digitalWrite(led, HIGH);
+void sendSensorData() {
+  HTTPClient http;
+  int sensorValue = analogRead(sensorPin);  // 센서 값 읽기
+  http.begin("http://192.168.100.231:8000/pots/control_sensorData/");  // Django URL
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");  // POST 요청 시 헤더 설정
 
+  // POST 요청으로 센서 값 전송
+  String postData = "sensor_value=" + String(sensorValue);
+  int httpCode = http.POST(postData);
+
+  if (httpCode > 0) {
+    Serial.printf("[HTTP] POST... code: %d\n", httpCode);
+  } else {
+    Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+  http.end();
 }
 
 void handlePump() {
@@ -130,7 +140,6 @@ void setup(void) {
 
   server.on("/", handleRoot);
   server.on("/client", handleURI);
-  server.on("/sensor", handleSensor);
   server.on("/pump", handlePump);
 
   server.onNotFound(handleNotFound);
@@ -143,6 +152,7 @@ void loop(void) {
   request = false;
 
   server.handleClient();
-  delay(2);  //allow the cpu to switch to other tasks
 
+  sendSensorData();
+  delay(5000);
 }

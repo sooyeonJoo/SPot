@@ -1,7 +1,8 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import JsonResponse
 import requests
+import subprocess
 
 
 # Create your views here.
@@ -9,7 +10,7 @@ import requests
 def control_pump(request):
     # 펌프
     if request.method == 'POST':
-        esp32_url = "http://192.168.0.51/pump"  # ESP32 주소
+        esp32_url = "http://192.168.100.93/pump"  # ESP32 주소
         try:
             response = requests.get(esp32_url)
             if response.status_code == 200:
@@ -19,16 +20,23 @@ def control_pump(request):
         except requests.exceptions.RequestException as e:
             message = f"Error occurred: {e}"
         return render(request, 'control_pump.html', {'message': message})
-        
-    # 수분 센서
-    sensor_url = "http://192.168.154.93/sensor"  # ESP32 주소
-    try:
-        sensor_response = requests.get(sensor_url)
-        sensor_value = sensor_response.text
-    except requests.exceptions.RequestException as e:
-        sensor_value = f"Error occurred: {e}"
-    context = {
-        'sensor_value': sensor_value
-    }
 
     return render(request, 'control_pump.html')
+
+
+@csrf_exempt  # CSRF 검증 비활성화
+def control_sensorData(request):
+    sensor_value = None
+    
+    # 센서 데이터 수신 (POST 요청)
+    if request.method == 'POST':
+        sensor_value = request.POST.get('sensor_value', None)  # 센서 값 가져오기
+        if sensor_value is not None:
+            # 센서 값 처리
+            print(f"Received sensor value: {sensor_value}")
+
+            # # 특정 값을 지났을 때 waterdbmanage.py 실행
+            # if sensor_value < 1000:  
+            #     subprocess.run(["python", "../../schedules/waterdbmanage.py"])
+
+    return JsonResponse({'sensor_value': sensor_value})
