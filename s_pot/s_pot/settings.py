@@ -28,13 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost', 
-<<<<<<< HEAD
     '127.0.0.1',
-    '10.0.2.2'
-=======
-    '127.0.0.1', 
->>>>>>> bac998654b14182ac2e518d78c8ad8fce8e81b18
+    '10.0.2.2' ,
 ]
+
 hostname = socket.gethostname()
 local_ip = socket.gethostbyname(hostname)
 ALLOWED_HOSTS.append(local_ip)
@@ -52,6 +49,7 @@ INSTALLED_APPS = [
     'pots',
     'schedules',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 's_pot.urls'
@@ -95,9 +94,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'spotdb',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'HYWU',
         'HOST': '127.0.0.1',
-        'PORT':'3306',
+        'PORT':'3309',
     }
 }
 
@@ -143,3 +142,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+APPEND_SLASH = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://10.0.2.2:8000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000"
+]
