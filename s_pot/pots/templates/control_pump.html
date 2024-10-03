@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Control Pump</title>
+  </head>
+  <body>
+    <h1>ESP32 Pump 작동 버튼</h1>
+    <form method="post" action="{% url 'control_pump' %}">
+      {% csrf_token %}
+      <button type="submit">작동</button>
+    </form>
+    {% if message %}
+    <p style="color: green">{{ message }}</p>
+    {% endif %}
+    <p>Sensor Value: {{ sensor_value }}</p>
+  </body>
+</html>

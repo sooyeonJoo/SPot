@@ -10,8 +10,8 @@ class SchedulesConfig(AppConfig):
         scheduler.add_job(
             check_plant_watering,
             'cron',
-            hour=8,  # 매일 오전 8시에 실행
-            minute=10
+            hour=11,  # 매일 오전 8시에 실행
+            minute=11
         )
         scheduler.start()
         print("Scheduler started")

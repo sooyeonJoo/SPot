@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,12 +27,17 @@ SECRET_KEY = 'django-insecure-4479*(qq&+#n(l$xw@6e--*m85n@2+a9_#0*4*!4s0&sm@_%+8
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '192.168.165.231',
     'localhost', 
+<<<<<<< HEAD
     '127.0.0.1',
     '10.0.2.2'
+=======
+    '127.0.0.1', 
+>>>>>>> bac998654b14182ac2e518d78c8ad8fce8e81b18
 ]
-
+hostname = socket.gethostname()
+local_ip = socket.gethostbyname(hostname)
+ALLOWED_HOSTS.append(local_ip)
 
 # Application definition
 
@@ -89,9 +95,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'spotdb',
         'USER': 'root',
-        'PASSWORD': 'HYWU',
+        'PASSWORD': 'root',
         'HOST': '127.0.0.1',
-        'PORT':'3309',
+        'PORT':'3306',
     }
 }
 
