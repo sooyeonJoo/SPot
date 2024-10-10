@@ -30,7 +30,7 @@ def control_sensorData(request):
     # 센서 데이터 수신 (POST 요청)
     if request.method == 'POST':
         sensor_value = request.POST.get('sensor_value', None)  # 센서 값 가져오기
-    
+        
         if sensor_value is not None:
             try:
                 sensor_value = int(sensor_value)  # 문자열을 정수로 변환
