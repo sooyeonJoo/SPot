@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.0.2.2'
 ]
+
 hostname = socket.gethostname()
 local_ip = socket.gethostbyname(hostname)
 ALLOWED_HOSTS.append(local_ip)
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'pots',
     'schedules',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 's_pot.urls'
@@ -142,3 +145,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+APPEND_SLASH = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://10.0.2.2:8000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000"
+]
