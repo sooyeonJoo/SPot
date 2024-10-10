@@ -2,6 +2,9 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .crawler import crawl_and_save_plant
 from .models import PlantsInfo
+import logging
+
+logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def crawl_plant_info(request, plant_name):
@@ -11,6 +14,7 @@ def crawl_plant_info(request, plant_name):
 
         # 식물 정보가 존재하면 반환
         response_data = {
+            'message': '성공적으로 조회되었습니다.',
             'name': plant_info.name,
             'engname': plant_info.engname,
             'lifespan': plant_info.lifespan,
@@ -64,6 +68,7 @@ def crawl_plant_info(request, plant_name):
             )
 
         response_data = {
+            'message': '성공적으로 크롤링되었습니다.',
             'name': plant_info.get('name'),
             'engname': plant_info.get('engname'),
             'lifespan': plant_info.get('lifespan'),
@@ -76,4 +81,4 @@ def crawl_plant_info(request, plant_name):
             'watering_frequency': plant_info.get('watering_frequency'),
             'pests_diseases': plant_info.get('pests_diseases')
         }
-        return JsonResponse(response_data)
+        return JsonResponse(response_data, status=200)
