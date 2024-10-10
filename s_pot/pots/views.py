@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
+from mobiles.models import Plants, User
 from django.shortcuts import render
 from django.http import JsonResponse
 import requests
@@ -42,10 +43,21 @@ def control_sensorData(request):
 
             response_data = {'sensor_value': sensor_value}
 
+            # # 특정 값 미만일 때 waterdbmanage.py 실행
+            # if sensor_value < 1000:  
+            #     importlib.import_module('schedules.waterdbmanage')
+            #     response_data['message'] = 'waterdbmanage.py 실행 완료'
+
             # 특정 값 미만일 때 waterdbmanage.py 실행
-            if sensor_value < 1000:  
-                importlib.import_module('schedules.waterdbmanage')
-                response_data['message'] = 'waterdbmanage.py 실행 완료'
+            if sensor_value < 1000:
+                waterdbmanage = importlib.import_module('schedules.waterdbmanage')
+                
+                plant_instance = Plants.objects.get(plantsid = 1) 
+                user_instance = User.objects.get(userid = 1) 
+                waterdbmanage.save_watering_data_and_schedule_update(plant_instance, user_instance)
+
+                response_data['message'] = 'save_watering_data_and_schedule_update 함수 실행 완료'
+
 
             return JsonResponse(response_data)
 
