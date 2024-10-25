@@ -1,8 +1,27 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .crawler import crawl_and_save_plant
-from .models import PlantsInfo
+from .models import User, PlantsInfo
 import logging
+
+@api_view(['POST'])
+def login_user(request):
+    data = request.data 
+    user_id = data.get('id')
+    password = data.get('password')
+    print(f"Received ID: {user_id}")
+    print(f"Received Password: {password}")
+    
+    try:
+        user = User.objects.get(id=user_id)
+        # 평문 비밀번호 비교
+        if user.passwd == password:  # 저장된 비밀번호와 입력된 비밀번호 비교
+            return JsonResponse({"id": user.userid, "message": "Login successful"})
+        else:
+            return JsonResponse({"error": "Invalid password"}, status=400)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+
 
 logger = logging.getLogger(__name__)
 
