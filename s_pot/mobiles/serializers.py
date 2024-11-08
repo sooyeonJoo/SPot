@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, PlantsInfo, Plants
+from .models import User, PlantsInfo, Plants,Wateringschedule
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,5 +22,16 @@ class PlantsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plants
         fields = ['plantsid', 'userid', 'name', 'nickname', 'birthday', 'deathday', 'color', 'wateringInterval']
+
+
+class PlantsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Plants
+        fields = ['nickname', 'birthday','color','wateringInterval']
+
+class WateringscheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wateringschedule
+        fields = ['date']
 
 
