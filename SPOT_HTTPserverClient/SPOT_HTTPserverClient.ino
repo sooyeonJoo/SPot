@@ -19,7 +19,7 @@ bool request = false;
 void restRequest() {
   
   HTTPClient http;
-  http.begin("http://192.168.0.13:8000/crawler_api");  //HTTPS example connection
+  http.begin("http://" + serverIP + "8000/crawler_api");  //HTTPS example connection
   //http.begin("http://www.arduino.php5.sk/rele/rele1.txt"); //HTTP example connection
   //if uncomment HTTP example, you can comment root CA certificate too!
   int httpCode = http.GET();
@@ -80,16 +80,18 @@ void sendSensorData() {
 }
 
 void handlePump() {
+  Serial.println("Activating pump...");
   digitalWrite(led, LOW);
   digitalWrite(12, HIGH);
   digitalWrite(13, LOW);
   delay(1000);
-  server.send(200, "text/plain", "Pump activated");
   digitalWrite(12, LOW);
   digitalWrite(13, HIGH);
   delay(1000);
   digitalWrite(12, LOW);
   digitalWrite(13, LOW);
+  server.send(200, "text/plain", "Pump activated");
+  Serial.println("Pump activated.");
   digitalWrite(led, HIGH);
 }
 

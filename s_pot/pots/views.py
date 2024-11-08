@@ -11,7 +11,7 @@ import importlib
 def control_pump(request):
     # 펌프
     if request.method == 'POST':
-        esp32_url = "http://192.168.100.93/pump"  # ESP32 주소
+        esp32_url = "http://192.168.18.93/pump"  # ESP32 주소
         try:
             response = requests.get(esp32_url)
             if response.status_code == 200:

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
-import socket
+from .get_wifi_ip import get_wifi_ip
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -30,12 +30,12 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost', 
     '127.0.0.1',
-    '10.0.2.2'
+    '10.0.2.2',
 ]
 
-hostname = socket.gethostname()
-local_ip = socket.gethostbyname(hostname)
-ALLOWED_HOSTS.append(local_ip)
+local_ip = get_wifi_ip()
+if local_ip:
+    ALLOWED_HOSTS.append(local_ip)
 
 # Application definition
 
