@@ -1,7 +1,9 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
+
+from .serializers import PlantsSerializer
 from .crawler import crawl_and_save_plant
-from .models import User, PlantsInfo
+from .models import User, PlantsInfo,Plants
 import logging
 
 @api_view(['POST'])
@@ -72,6 +74,23 @@ def crawl_plant_info(request, plant_name):
             )
 
         return JsonResponse({"message": "식물 정보가 성공적으로 저장되었습니다."}, status=201)
+    
+
+
+@api_view(['GET'])   #activity_main.xml에 식물 정보 카드 띄우는 코드
+def get_plants(request):
+    plants = Plants.objects.all() 
+    serializer = PlantsSerializer(plants, many=True)  
+    return JsonResponse(serializer.data, safe=False)
+    
+'''
+@api_view(['GET'])
+def get_plants(request):
+    plants = PlantsInfo.objects.all()
+    serializer = PlantSerializer(plants, many=True)
+    print(serializer.data)  # 로그에 데이터 출력
+    return JsonResponse(serializer.data, safe=False)
+'''
     
 '''
 교민이가 한 부분 일단 주석처리함요

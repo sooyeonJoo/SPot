@@ -10,9 +10,17 @@ class PlantsInfoSerializer(serializers.ModelSerializer):
     class meta:
         model = PlantsInfo
         fields = '__all__'
-        
+
+class PlantsInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlantsInfo
+        fields = ['temperature']  # temperature 필드만 포함
 
 class PlantsSerializer(serializers.ModelSerializer):
-    class meta:
+    name = PlantsInfoSerializer()  # 연결된 PlantsInfo의 temperature 필드를 포함
+
+    class Meta:
         model = Plants
-        fields = ['nickname', 'birthday', 'deathday','color','wateringInterval']
+        fields = ['plantsid', 'userid', 'name', 'nickname', 'birthday', 'deathday', 'color', 'wateringInterval']
+
+
