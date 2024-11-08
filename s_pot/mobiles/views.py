@@ -20,7 +20,7 @@ def login_user(request):
         user = User.objects.get(id=user_id)
         # 평문 비밀번호 비교
         if user.passwd == password:  # 저장된 비밀번호와 입력된 비밀번호 비교
-            return JsonResponse({"id": user.userid, "message": "Login successful"})
+            return JsonResponse({"id": user.userid,"name": user.name,"message": "Login successful"})
         else:
             return JsonResponse({"error": "Invalid password"}, status=400)
     except User.DoesNotExist:
