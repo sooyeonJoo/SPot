@@ -1,31 +1,27 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .crawler import crawl_and_save_plant
-from .models import User, PlantsInfo,Plants
+from .models import User, PlantsInfo, Plants, Wateringschedule
 import logging
 from .serializers import PlantsSerializer
-
-
-
+from rest_framework import status
 
 @api_view(['POST'])
 def login_user(request):
     data = request.data 
     user_id = data.get('id')
     password = data.get('password')
-    print(f"Received ID: {user_id}")
-    print(f"Received Password: {password}")
     
     try:
         user = User.objects.get(id=user_id)
         # 평문 비밀번호 비교
-        if user.passwd == password:  # 저장된 비밀번호와 입력된 비밀번호 비교
+        if user.passwd == password:
             return JsonResponse({"id": user.userid,"name": user.name,"message": "Login successful"})
         else:
             return JsonResponse({"error": "Invalid password"}, status=400)
     except User.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
-
 
 logger = logging.getLogger(__name__)
 
@@ -76,12 +72,87 @@ def crawl_plant_info(request, plant_name):
             )
 
         return JsonResponse({"message": "식물 정보가 성공적으로 저장되었습니다."}, status=201)
-    
 
 
-    @api_view(['GET'])   #activity_main.xml에 식물 정보 카드 띄우는 코드
-    def get_plants(request):
-        plants = Plants.objects.all() 
-        serializer = PlantsSerializer(plants, many=True)  
-        return JsonResponse(serializer.data, safe=False)
+@api_view(['GET'])   
+def get_plants(request):
+    plants = Plants.objects.all() 
+    serializer = PlantsSerializer(plants, many=True)  
+    return JsonResponse(serializer.data, safe=False)
     
+
+@api_view(['POST'])
+def send_plant_data(request):
+    if request.method == 'POST':
+        nickname = request.data.get('nickname')
+        birth_date = request.data.get('birthDate')
+        color = request.data.get('color')
+        watering_days = request.data.get('wateringDays')
+        plant_name = request.data.get('name')
+        user_id = 1
+        
+
+        # 유효성 검사
+        if not nickname or not birth_date or not color or not watering_days or not plant_name:
+            return Response({'error': '모든 필드를 올바르게 입력해 주세요.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # PlantsInfo를 찾기
+        plant_info = PlantsInfo.objects.filter(name=plant_name).first()
+        if not plant_info:
+            return Response({'error': '식물 정보가 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+
+        # 새로운 식물 등록
+        plant = Plants.objects.create(
+            name=plant_info,  # 외래키 연결
+            userid_id=user_id,
+            nickname=nickname,
+            birthday=birth_date,
+            color=color,
+            wateringInterval=watering_days
+        )
+
+        return Response({'success': True, 'plantId': plant.plantsid}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def send_watering_schedule(request):
+    if request.method == 'POST':
+        start_date = request.data.get('startDate')
+        plant_id = request.data.get('plantId')
+        #user_id = request.data.get('userId')
+        user_id = 1
+
+        # 유효성 검사
+        if not start_date or not plant_id or not user_id:
+            return Response({'error': '모든 필드를 올바르게 입력해 주세요.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 해당 식물과 사용자가 있는지 확인
+        plant = Plants.objects.filter(plantsid=plant_id).first()
+        user = User.objects.filter(userid=user_id).first()
+
+        if not plant or not user:
+            return Response({'error': '식물 또는 사용자 정보가 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 물 주기 시작 날짜 저장
+        watering_schedule = Wateringschedule.objects.create(
+            plantid=plant,  # 외래키 설정
+            userid=user,    # 외래키 설정
+            date=start_date
+        )
+
+        return Response({'success': True}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def get_watering_frequency(request, plant_name):
+    # plant_name을 기준으로 PlantsInfo 테이블에서 조회
+    plant_info = PlantsInfo.objects.filter(name=plant_name).first()
+
+    if not plant_info:
+        return Response({'error': '식물 정보가 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # 물 공급 주기 가져오기
+    watering_frequency = plant_info.watering_frequency  # PlantsInfo에서 가져옴
+    return Response({'wateringFrequency': watering_frequency, 'success': True}, status=status.HTTP_200_OK)
