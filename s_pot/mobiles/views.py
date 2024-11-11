@@ -74,7 +74,7 @@ def crawl_plant_info(request, plant_name):
         return JsonResponse({"message": "식물 정보가 성공적으로 저장되었습니다."}, status=201)
 
 
-@api_view(['GET'])   
+@api_view(['GET'])   #식물카드 띄우는 부분
 def get_plants(request):
     plants = Plants.objects.all() 
     serializer = PlantsSerializer(plants, many=True)  
@@ -156,3 +156,32 @@ def get_watering_frequency(request, plant_name):
     # 물 공급 주기 가져오기
     watering_frequency = plant_info.watering_frequency  # PlantsInfo에서 가져옴
     return Response({'wateringFrequency': watering_frequency, 'success': True}, status=status.HTTP_200_OK)
+
+
+#activity_info.xml에식물 정보 불러오는거
+def get_plant_info(request):
+    plant_name = request.GET.get('plantName', None)  # 쿼리 파라미터에서 plantName 가져오기
+    
+    if plant_name:
+        try:
+            # PlantsInfo 모델에서 plant_name을 기반으로 정보 조회
+            plant = PlantsInfo.objects.get(name=plant_name)
+            
+            # 반환할 필드들을 name을 제외하고 작성
+            response_data = {
+                'engname': plant.engname,
+                'lifespan': plant.lifespan,
+                'species': plant.species,
+                'cultivation_season': plant.cultivation_season,
+                'blooming_season': plant.blooming_season,
+                'harvesting_season': plant.harvesting_season,
+                'sunlight': plant.sunlight,
+                'watering_frequency': plant.watering_frequency,
+                'temperature': plant.temperature,
+                'pests_diseases': plant.pests_diseases,
+            }
+            return JsonResponse(response_data)
+        except PlantsInfo.DoesNotExist:
+            return JsonResponse({'error': 'Plant not found'}, status=404)
+    else:
+        return JsonResponse({'error': 'Plant name is required'}, status=400)    

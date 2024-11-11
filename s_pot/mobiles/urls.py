@@ -5,6 +5,7 @@ urlpatterns = [
     path('api/login/', views.login_user, name='login_user'),
     path('api/plants/crawl/<str:plant_name>/', views.crawl_plant_info, name='crawl_plant_info'),
     path('api/plants/',views.get_plants, name='get_plants'),
+    path('api/getPlantInfo/',views.get_plant_info, name='get_plant_info'),
 
     #등록하기 endpoint부분
     path('api/sendPlantData/', views.send_plant_data, name='send_plant_data'),
