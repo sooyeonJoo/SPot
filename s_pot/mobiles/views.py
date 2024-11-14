@@ -4,26 +4,37 @@ from rest_framework.response import Response
 from .crawler import crawl_and_save_plant
 from .models import User, PlantsInfo, Plants, Wateringschedule
 import logging
-from .serializers import PlantsSerializer
+from .serializers import UserSerializer, PlantsSerializer
 from rest_framework import status
 
 @api_view(['POST'])
 def login_user(request):
     data = request.data 
     user_id = data.get('id')
-    password = data.get('password')
+    password = data.get('passwd')
     
     try:
         user = User.objects.get(id=user_id)
         # 평문 비밀번호 비교
         if user.passwd == password:
-            return JsonResponse({"id": user.userid,"name": user.name,"message": "Login successful"})
+            return JsonResponse({"id": user.userid, "name": user.name, "message": "Login successful"})
         else:
             return JsonResponse({"error": "Invalid password"}, status=400)
     except User.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
 
 logger = logging.getLogger(__name__)
+
+
+@api_view(['POST'])
+def join_user(request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()  # 유효하면 User 모델에 저장
+        return JsonResponse({"id": serializer.data.get('id'), "message": "Join successful"})
+    else:
+        return Response(serializer.errors, status=400)
+
 
 @api_view(['POST'])
 def crawl_plant_info(request, plant_name):

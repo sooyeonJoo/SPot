@@ -4,7 +4,7 @@ from .models import User, PlantsInfo, Plants,Wateringschedule
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password']
+        fields = ['id', 'passwd', 'name', 'birthday', 'gender', 'tel', 'email']
 
 class PlantsInfoSerializer(serializers.ModelSerializer):
     class meta:
@@ -17,13 +17,10 @@ class PlantsInfoPartSerializer(serializers.ModelSerializer):
         fields = ['name','temperature'] #식물 이름과 온도를  포함
 
 class PlantsSerializer(serializers.ModelSerializer):
-    plant_info = PlantsInfoSerializer()
-    name = PlantsInfoPartSerializer()  # 연결된 PlantsInfo의 temperature 필드를 포함
-
+    name = PlantsInfoPartSerializer() #연결된 PlantsInfo에서 name과 temperature 가져오기
     class Meta:
         model = Plants
-        fields = ['plantsid', 'userid', 'name', 'nickname', 'birthday', 'deathday', 'color', 'wateringInterval']
-        read_only_fields = ['name'] 
+        fields = ['nickname','name', 'birthday', 'color', 'wateringInterval' ]
 
 class WateringscheduleSerializer(serializers.ModelSerializer):
     class Meta:

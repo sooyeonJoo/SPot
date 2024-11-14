@@ -13,53 +13,6 @@ String serverIP = "";
 const int led = LED_BUILTIN;
 const int sensorPin = 34;
 
-bool request = false;
-
-
-void restRequest() {
-  
-  HTTPClient http;
-  http.begin("http://" + serverIP + "8000/crawler_api");  //HTTPS example connection
-  //http.begin("http://www.arduino.php5.sk/rele/rele1.txt"); //HTTP example connection
-  //if uncomment HTTP example, you can comment root CA certificate too!
-  int httpCode = http.GET();
-  if (httpCode > 0) {
-    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-    //file found at server --> on unsucessful connection code will be -1
-    if (httpCode == HTTP_CODE_OK) {
-      String payload = http.getString();
-      Serial.println(payload);
-      // server.send(200, "text/plain", payload);
-    }
-  } else {
-    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-    server.send(404, "text/plain", server.arg(0) + " is not responding.");
-
-  }
-  http.end();
-}
-
-void handleRoot() {
-  digitalWrite(led, LOW);
-  server.send(200, "text/plain", "hello from esp32!");
-  delay(1000);          // led on 유지
-  digitalWrite(led, HIGH);
-}
-
-void handleURI() {
-  digitalWrite(led, LOW);
-
-  if (server.args() > 0) {
-    for (int i = 0 ; i < server.args() ; i++) {
-      Serial.print(server.argName(i));
-      Serial.print("  ");
-      Serial.println(server.arg(i));
-    }
-    restRequest();      // http responsd 처리
-  }
-  digitalWrite(led, HIGH);
-
-}
 
 void sendSensorData() {
   HTTPClient http;
@@ -79,6 +32,7 @@ void sendSensorData() {
   http.end();
 }
 
+
 void handlePump() {
   Serial.println("Activating pump...");
   digitalWrite(led, LOW);
@@ -94,6 +48,7 @@ void handlePump() {
   Serial.println("Pump activated.");
   digitalWrite(led, HIGH);
 }
+
 
 void handleNotFound() {
   digitalWrite(led, LOW);
@@ -111,6 +66,7 @@ void handleNotFound() {
   server.send(404, "text/plain", message);
   digitalWrite(led, HIGH);
 }
+
 
 void setup(void) {
   pinMode(12, OUTPUT);
@@ -146,21 +102,15 @@ void setup(void) {
   }
   digitalWrite(led, HIGH);
 
-  server.on("/", handleRoot);
-  server.on("/client", handleURI);
   server.on("/pump", handlePump);
-
-  server.onNotFound(handleNotFound);
 
   server.begin();
   Serial.println("HTTP server started");
 }
 
+
 void loop(void) {
-  request = false;
-
   server.handleClient();
-
   sendSensorData();
   delay(5000);
 }
