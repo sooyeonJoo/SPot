@@ -7,11 +7,11 @@ class CalenderAdmin(admin.ModelAdmin):
 
 @admin.register(Plants)
 class PlantsAdmin(admin.ModelAdmin):
-    list_display = ('plantsid', 'name', 'nickname', 'birthday', 'deathday', 'color','wateringInterval')
+    list_display = ('plantsid', 'userid', 'name', 'nickname', 'birthday', 'deathday', 'color','wateringInterval')
 
 @admin.register(PlantsInfo)
 class PlantsInfoAdmin(admin.ModelAdmin):
-    list_display = ('name', 'engname', 'lifespan', 'sunlight', 'blooming_season', 'cultivation_season', 'harvesting_season', 'watering_frequency', 'temperature', 'pests_diseases')
+    list_display = ('name', 'engname', 'lifespan', 'sunlight', 'species', 'blooming_season', 'cultivation_season', 'harvesting_season', 'watering_frequency', 'temperature', 'pests_diseases')
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
