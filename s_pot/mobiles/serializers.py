@@ -5,6 +5,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'passwd', 'name', 'birthday', 'gender', 'tel', 'email']
+        extra_kwargs = {
+            'birthday': {'required': False},
+            'gender': {'required': False},
+            'tel': {'required': False},
+            'email': {'required': False}
+        }
 
 class PlantsInfoSerializer(serializers.ModelSerializer):
     class meta:

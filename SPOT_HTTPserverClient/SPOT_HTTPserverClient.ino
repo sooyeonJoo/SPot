@@ -4,8 +4,8 @@
 #include <ESPmDNS.h>
 #include <HTTPClient.h>
 
-const char* ssid = "JIUS22+WB";
-const char* password = "19940322";
+const char* ssid = "iptime-jinee1052";
+const char* password = "regen9608";
 
 WebServer server(80);
 String serverIP = "";
@@ -35,18 +35,13 @@ void sendSensorData() {
 
 void handlePump() {
   Serial.println("Activating pump...");
-  digitalWrite(led, LOW);
   digitalWrite(12, HIGH);
   digitalWrite(13, LOW);
-  delay(1000);
-  digitalWrite(12, LOW);
-  digitalWrite(13, HIGH);
-  delay(1000);
+  delay(10000);
   digitalWrite(12, LOW);
   digitalWrite(13, LOW);
   server.send(200, "text/plain", "Pump activated");
   Serial.println("Pump activated.");
-  digitalWrite(led, HIGH);
 }
 
 
@@ -111,6 +106,6 @@ void setup(void) {
 
 void loop(void) {
   server.handleClient();
-  sendSensorData();
+  // sendSensorData();
   delay(5000);
 }
