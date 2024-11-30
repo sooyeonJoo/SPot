@@ -19,8 +19,8 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Wateringcalendar)
 class WateringcalendarAdmin(admin.ModelAdmin):
-    list_display = ('plantid', 'userid', 'date')
+    list_display = ('plantsid', 'userid', 'date')
 
 @admin.register(Wateringschedule)
 class WateringscheduleAdmin(admin.ModelAdmin):
-    list_display = ('plantid', 'userid', 'date')
+    list_display = ('plantsid', 'userid', 'date')
