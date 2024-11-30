@@ -155,3 +155,6 @@ CORS_ALLOWED_ORIGINS = [
 
 if local_ip:
     CORS_ALLOWED_ORIGINS.append(f"http://{local_ip}:8000")
+
+
+

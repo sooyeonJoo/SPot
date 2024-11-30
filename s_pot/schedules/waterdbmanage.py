@@ -2,12 +2,11 @@ from django.utils import timezone
 from datetime import timedelta
 from mobiles.models import Wateringcalendar, Wateringschedule
 
-print("waterdbmanage.py executed successfully.")
-
-def save_watering_data_and_schedule_update(plant, user):
+def save_watering_data_and_schedule_update(plant, user, start_date, watering_interval):
     print("save_watering_data_and_schedule_update")
     current_date = timezone.now().date()
 
+    # Wateringcalendar에 오늘 날짜 데이터 저장
     watering_entry = Wateringcalendar.objects.create(
         plantid=plant,
         userid=user,
@@ -15,35 +14,27 @@ def save_watering_data_and_schedule_update(plant, user):
     )
     watering_entry.save()
 
-    first_scheduled_entry = Wateringschedule.objects.filter(plantid=plant, userid=user).order_by('date').first()
+    # 첫 번째 스케줄을 기준으로 한 달치 스케줄 생성
+    schedule_start_date = start_date  # 사용자가 입력한 시작 날짜
+    schedules = []
+    
+    # 한 달간 물 주기 스케줄을 생성
+    for i in range(30):  # 한 달간 반복
+        next_schedule_date = schedule_start_date + timedelta(days=(i * watering_interval))
+        schedules.append(Wateringschedule(
+            plantid=plant,
+            userid=user,
+            date=next_schedule_date
+        ))
 
-    watering_interval = plant.wateringInterval
-
-    if first_scheduled_entry:
-        first_scheduled_date = first_scheduled_entry.date
-        print(f"가장 최근의 스케줄 날짜: {first_scheduled_date}")
-
-        schedule_1 = first_scheduled_date + timedelta(days=watering_interval)
-        schedule_2 = schedule_1 + timedelta(days=watering_interval)
-        schedule_3 = schedule_2 + timedelta(days=watering_interval)
-    else:
-        print("스케줄이 없으므로 오늘 날짜를 기준으로 계산합니다.")
-        schedule_1 = current_date + timedelta(days=watering_interval)
-        schedule_2 = schedule_1 + timedelta(days=watering_interval)
-        schedule_3 = schedule_2 + timedelta(days=watering_interval)
-
-    new_schedules = [
-        Wateringschedule(plantid=plant, userid=user, date=schedule_1),
-        Wateringschedule(plantid=plant, userid=user, date=schedule_2),
-        Wateringschedule(plantid=plant, userid=user, date=schedule_3),
-    ]
-
+    # 이미 존재하는 스케줄과 겹치는 날짜를 필터링하여 추가
     existing_dates = Wateringschedule.objects.filter(
-        plantid=plant, userid=user, date__in=[schedule_1, schedule_2, schedule_3]
+        plantid=plant, userid=user, date__in=[schedule.date for schedule in schedules]
     ).values_list('date', flat=True)
 
-    filtered_schedules = [schedule for schedule in new_schedules if schedule.date not in existing_dates]
+    filtered_schedules = [schedule for schedule in schedules if schedule.date not in existing_dates]
 
+    # 새로운 스케줄 추가
     Wateringschedule.objects.bulk_create(filtered_schedules)
 
     print(f"새로운 스케줄 {len(filtered_schedules)}개를 추가했습니다.")
