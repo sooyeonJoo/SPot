@@ -147,7 +147,7 @@ def send_watering_schedule(request):
             return Response({'error': '유효하지 않은 날짜 형식입니다. (YYYY-MM-DD)'}, status=status.HTTP_400_BAD_REQUEST)
 
         # `plantsid` 확인
-        plant = Plants.objects.filter(plantsid=plants_id).first()
+        plant = Plants.objects.get(plantsid=plants_id)
         if not plant:
             return Response({'error': '식물 정보가 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -156,7 +156,7 @@ def send_watering_schedule(request):
 
         # 일정 저장 함수 호출
         try:
-            save_watering_data_and_schedule_update(plant, start_date)
+            save_watering_data_and_schedule_update(plant.plantsid, start_date)
         except Exception as e:
             return Response({'error': f'일정 생성 중 오류 발생: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -50,11 +50,11 @@ def control_sensorData(request):
 
             # 특정 값 미만일 때 waterdbmanage.py 실행
             if sensor_value < 1000:
-                waterdbmanage = importlib.import_module('schedules.waterdbmanage')
+                calendardbmanage = importlib.import_module('schedules.calendardbmanage')
                 
-                plant_instance = Plants.objects.get(plantsid = 1) 
-                user_instance = User.objects.get(userid = 1) 
-                waterdbmanage.save_watering_data_and_schedule_update(plant_instance, user_instance)
+                plant_instance = Plants.objects.get(plantsid = 25) 
+                user_instance = User.objects.get(userid = 2) 
+                calendardbmanage.schedule_update(plant_instance, user_instance)
 
                 response_data['message'] = 'save_watering_data_and_schedule_update 함수 실행 완료'
 

@@ -76,7 +76,7 @@ class User(models.Model):
 
 class Wateringcalendar(models.Model):
     calendarid = models.AutoField(db_column='calendarId',primary_key=True)  # 새로운 AutoField를 기본 키로 설정
-    plantsid = models.ForeignKey('Plants', models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
+    plantsid = models.ForeignKey(Plants, models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
     userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
     date = models.DateField()  # date는 기본 키가 아니므로 그냥 필드로 설정
 
@@ -88,8 +88,8 @@ class Wateringcalendar(models.Model):
 
 class Wateringschedule(models.Model):
     scheduleid = models.AutoField(db_column='scheduleId',primary_key=True)  # 새로운 AutoField를 기본 키로 설정
-    plantsid = models.ForeignKey('Plants', models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
-    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
+    plantsid = models.ForeignKey(Plants, models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
+    userid = models.ForeignKey(User, models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
     date = models.DateField()  # date는 기본 키가 아니므로 그냥 필드로 설정
 
     class Meta:
