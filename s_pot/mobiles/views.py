@@ -6,6 +6,8 @@ from .models import User, PlantsInfo, Plants, Wateringschedule
 import logging
 from .serializers import UserSerializer, PlantsSerializer
 from rest_framework import status
+from schedules.waterdbmanage import save_watering_data_and_schedule_update  # waterdbmanager에서 함수 import
+from django.utils import timezone
 
 @api_view(['POST'])
 def login_user(request):
@@ -100,7 +102,7 @@ def send_plant_data(request):
         color = request.data.get('color')
         watering_days = request.data.get('wateringDays')
         plant_name = request.data.get('name')
-        user_id = 1
+        user_id = 2
         
 
         # 유효성 검사
@@ -131,29 +133,35 @@ def send_plant_data(request):
 def send_watering_schedule(request):
     if request.method == 'POST':
         start_date = request.data.get('startDate')
-        plant_id = request.data.get('plantId')
-        #user_id = request.data.get('userId')
-        user_id = 1
+        plants_id = request.data.get('plantId')
+        user_id = 2  # 하드코딩된 사용자 ID
 
         # 유효성 검사
-        if not start_date or not plant_id or not user_id:
-            return Response({'error': '모든 필드를 올바르게 입력해 주세요.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not start_date or not plants_id:
+            return Response({'error': '모든 필드를 입력해 주세요.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 해당 식물과 사용자가 있는지 확인
-        plant = Plants.objects.filter(plantsid=plant_id).first()
-        user = User.objects.filter(userid=user_id).first()
+        # `start_date` 변환
+        try:
+            start_date = timezone.datetime.strptime(start_date, "%Y-%m-%d").date()
+        except ValueError:
+            return Response({'error': '유효하지 않은 날짜 형식입니다. (YYYY-MM-DD)'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not plant or not user:
-            return Response({'error': '식물 또는 사용자 정보가 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        # `plantsid` 확인
+        plant = Plants.objects.filter(plantsid=plants_id).first()
+        if not plant:
+            return Response({'error': '식물 정보가 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
-        # 물 주기 시작 날짜 저장
-        watering_schedule = Wateringschedule.objects.create(
-            plantid=plant,  # 외래키 설정
-            userid=user,    # 외래키 설정
-            date=start_date
-        )
+        # 기존 물 주기 값 가져오기 (기존 wateringInterval 값 사용)
+        #watering_interval = plant.wateringInterval
 
-        return Response({'success': True}, status=status.HTTP_201_CREATED)
+        # 일정 저장 함수 호출
+        try:
+            save_watering_data_and_schedule_update(plant, start_date)
+        except Exception as e:
+            return Response({'error': f'일정 생성 중 오류 발생: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response({'success': True, 'message': '일정이 성공적으로 생성되었습니다.'}, status=status.HTTP_201_CREATED)
+
 
 
 @api_view(['GET'])

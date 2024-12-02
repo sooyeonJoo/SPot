@@ -75,9 +75,10 @@ class User(models.Model):
 
 
 class Wateringcalendar(models.Model):
-    plantsid = models.ForeignKey(Plants, models.DO_NOTHING, db_column='plantId')  # Field name made lowercase.
-    userid = models.ForeignKey(User, models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
-    date = models.DateField(primary_key=True)  # The composite primary key (date, plantId, userId) found, that is not supported. The first column is selected.
+    calendarid = models.AutoField(db_column='calendarId',primary_key=True)  # 새로운 AutoField를 기본 키로 설정
+    plantsid = models.ForeignKey('Plants', models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
+    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
+    date = models.DateField()  # date는 기본 키가 아니므로 그냥 필드로 설정
 
     class Meta:
         managed = False
@@ -85,11 +86,11 @@ class Wateringcalendar(models.Model):
         verbose_name_plural = 'wateringcalendar'
 
 
-
 class Wateringschedule(models.Model):
-    plantsid = models.ForeignKey(Plants, models.DO_NOTHING, db_column='plantId')  # Field name made lowercase.
-    userid = models.ForeignKey(User, models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
-    date = models.DateField(primary_key=True)  # The composite primary key (date, userId, plantId) found, that is not supported. The first column is selected.
+    scheduleid = models.AutoField(db_column='scheduleId',primary_key=True)  # 새로운 AutoField를 기본 키로 설정
+    plantsid = models.ForeignKey('Plants', models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
+    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
+    date = models.DateField()  # date는 기본 키가 아니므로 그냥 필드로 설정
 
     class Meta:
         managed = False

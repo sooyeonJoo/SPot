@@ -26,7 +26,7 @@ class PlantsSerializer(serializers.ModelSerializer):
     name = PlantsInfoPartSerializer() #연결된 PlantsInfo에서 name과 temperature 가져오기
     class Meta:
         model = Plants
-        fields = ['nickname','name', 'birthday', 'color', 'wateringInterval' ]
+        fields = ['plantsid','nickname','name', 'birthday', 'color', 'wateringInterval' ]
 
 class WateringscheduleSerializer(serializers.ModelSerializer):
     class Meta:
