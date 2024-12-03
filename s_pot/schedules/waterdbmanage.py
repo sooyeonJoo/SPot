@@ -1,5 +1,5 @@
 from datetime import timedelta
-from mobiles.models import Wateringcalendar, Wateringschedule,Plants
+from mobiles.models import Wateringschedule,Plants
 
 def save_watering_data_and_schedule_update(plants_id, start_date):
     # Wateringcalendar에 오늘 날짜 데이터 저장 부분을 제거하고,

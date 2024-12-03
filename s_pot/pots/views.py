@@ -4,6 +4,9 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import requests
 import importlib
+from rest_framework import status
+from rest_framework.response import Response
+from schedules.calendardbmanage import schedule_update
 
 
 # Create your views here.
@@ -50,11 +53,13 @@ def control_sensorData(request):
 
             # 특정 값 미만일 때 waterdbmanage.py 실행
             if sensor_value < 1000:
-                calendardbmanage = importlib.import_module('schedules.calendardbmanage')
                 
                 plant_instance = Plants.objects.get(plantsid = 25) 
                 user_instance = User.objects.get(userid = 2) 
-                calendardbmanage.schedule_update(plant_instance, user_instance)
+                try:
+                    schedule_update(plant_instance, user_instance)
+                except Exception as e:
+                    return Response({'error': f'일정 생성 중 오류 발생: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
                 response_data['message'] = 'save_watering_data_and_schedule_update 함수 실행 완료'
 
