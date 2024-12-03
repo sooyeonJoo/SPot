@@ -3,13 +3,27 @@ from mobiles.models import Plants, User
 from django.shortcuts import render
 from django.http import JsonResponse
 import requests
-import importlib
 from rest_framework import status
 from rest_framework.response import Response
 from schedules.calendardbmanage import schedule_update
 
 
 # Create your views here.
+@csrf_exempt  # CSRF 검증 비활성화
+def activate_pump_directly():
+    esp32_url = "http://192.168.0.20/pump"  # ESP32 주소
+    try:
+        response = requests.get(esp32_url, timeout=5)  # 타임아웃 설정
+        if response.status_code == 200:
+            return "Pump activated successfully!"
+        else:
+            return f"Failed to activate pump: {response.status_code}"
+    except requests.exceptions.Timeout:
+        return "Pump activation timeout error."
+    except requests.exceptions.RequestException as e:
+        return f"Error occurred: {e}"
+
+
 @csrf_exempt  # CSRF 검증 비활성화
 def control_pump(request):
     # 펌프
@@ -54,7 +68,7 @@ def control_sensorData(request):
             # 특정 값 미만일 때 waterdbmanage.py 실행
             if sensor_value < 1000:
                 
-                plant_instance = Plants.objects.get(plantsid = 25) 
+                plant_instance = Plants.objects.get(plantsid = 3) 
                 user_instance = User.objects.get(userid = 2) 
                 try:
                     schedule_update(plant_instance, user_instance)

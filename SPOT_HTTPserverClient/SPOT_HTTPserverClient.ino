@@ -4,8 +4,8 @@
 #include <ESPmDNS.h>
 #include <HTTPClient.h>
 
-const char* ssid = "iptime-jinee1052";
-const char* password = "regen9608";
+const char* ssid = "wifi_19-310";
+const char* password = "wifi19310";
 
 WebServer server(80);
 String serverIP = "";
@@ -106,6 +106,6 @@ void setup(void) {
 
 void loop(void) {
   server.handleClient();
-  // sendSensorData();
+  sendSensorData();
   delay(5000);
 }
