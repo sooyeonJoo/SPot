@@ -10,25 +10,10 @@ from schedules.calendardbmanage import schedule_update
 
 # Create your views here.
 @csrf_exempt  # CSRF 검증 비활성화
-def activate_pump_directly():
-    esp32_url = "http://192.168.0.20/pump"  # ESP32 주소
-    try:
-        response = requests.get(esp32_url, timeout=5)  # 타임아웃 설정
-        if response.status_code == 200:
-            return "Pump activated successfully!"
-        else:
-            return f"Failed to activate pump: {response.status_code}"
-    except requests.exceptions.Timeout:
-        return "Pump activation timeout error."
-    except requests.exceptions.RequestException as e:
-        return f"Error occurred: {e}"
-
-
-@csrf_exempt  # CSRF 검증 비활성화
 def control_pump(request):
     # 펌프
     if request.method == 'POST':
-        esp32_url = "http://192.168.0.20/pump"  # ESP32 주소
+        esp32_url = "http://192.168.0.51/pump"  # ESP32 주소
         try:
             response = requests.get(esp32_url)
             if response.status_code == 200:
@@ -60,23 +45,23 @@ def control_sensorData(request):
 
             response_data = {'sensor_value': sensor_value}
 
-            # # 특정 값 미만일 때 waterdbmanage.py 실행
-            # if sensor_value < 1000:  
-            #     importlib.import_module('schedules.waterdbmanage')
-            #     response_data['message'] = 'waterdbmanage.py 실행 완료'
-
-            # 특정 값 미만일 때 waterdbmanage.py 실행
-            if sensor_value < 1000:
-                
-                plant_instance = Plants.objects.get(plantsid = 3) 
-                user_instance = User.objects.get(userid = 2) 
+            # 특정 값 미만일 때
+            if sensor_value < 1800:
                 try:
-                    schedule_update(plant_instance, user_instance)
+                    plant_instance = Plants.objects.get(plantsid=3)  # Plants 객체 가져오기
+                    user_instance = User.objects.get(userid=2)  # User 객체 가져오기
+
+                    # schedule_update 함수 호출 시, plant_instance 객체가 아닌 plantsid 값만 전달
+                    schedule_update(plant_instance.plantsid, user_instance.userid)
+
+                    response_data['message'] = 'save_watering_data_and_schedule_update 함수 실행 완료'
+
+                except Plants.DoesNotExist:
+                    return JsonResponse({'error': 'Plant not found'}, status=404)
+                except User.DoesNotExist:
+                    return JsonResponse({'error': 'User not found'}, status=404)
                 except Exception as e:
-                    return Response({'error': f'일정 생성 중 오류 발생: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-                response_data['message'] = 'save_watering_data_and_schedule_update 함수 실행 완료'
-
+                    return JsonResponse({'error': f'Error: {str(e)}'}, status=500)
 
             return JsonResponse(response_data)
 
