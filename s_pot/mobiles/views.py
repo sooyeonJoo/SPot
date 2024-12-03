@@ -102,7 +102,7 @@ def send_plant_data(request):
         color = request.data.get('color')
         watering_days = request.data.get('wateringDays')
         plant_name = request.data.get('name')
-        user_id = 2
+        user_id = 1
         
 
         # 유효성 검사
@@ -204,3 +204,6 @@ def get_plant_info(request):
             return JsonResponse({'error': 'Plant not found'}, status=404)
     else:
         return JsonResponse({'error': 'Plant name is required'}, status=400)    
+    
+
+

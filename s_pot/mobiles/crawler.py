@@ -1,12 +1,11 @@
-
-
 import logging
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
+from bs4 import BeautifulSoup
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
-from .models import PlantsInfo  # Django 데이터베이스 모델
+from .models import PlantsInfo  # Django 데이터베이스 모델from bs4 import BeautifulSoup
 
 # 로거 설정
 logger = logging.getLogger(__name__) #콘솔창에 흔적 남김
@@ -131,7 +130,10 @@ def crawl_and_save_plant(plant_name):
         if pests_diseases_title:
             pests_diseases = pests_diseases_title.get_text(strip=True)
 
-
+    image_url = "정보없음" 
+    image_element = html2.find('img', class_='description-main-image')
+    if image_element:
+        image_url = image_element.get('src', '정보없음')
 
 
     # 정보 추출
@@ -147,6 +149,8 @@ def crawl_and_save_plant(plant_name):
         "watering_frequency": watering_frequency,  
         "temperature": temperature,  
         "pests_diseases": pests_diseases,  
+        "image_url":image_url
+
     }
 
 
@@ -162,7 +166,8 @@ def crawl_and_save_plant(plant_name):
         harvesting_season=plant_info['harvesting_season'],
         watering_frequency=plant_info['watering_frequency'],
         temperature=plant_info['temperature'],
-        pests_diseases=plant_info['pests_diseases']
+        pests_diseases=plant_info['pests_diseases'],
+        image_url=plant_info['image_url']
     )
     plant_info_db.save()
 

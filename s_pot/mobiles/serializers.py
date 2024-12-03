@@ -17,10 +17,12 @@ class PlantsInfoSerializer(serializers.ModelSerializer):
         model = PlantsInfo
         fields = '__all__'
 
+
 class PlantsInfoPartSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlantsInfo
-        fields = ['name','temperature'] #식물 이름과 온도를  포함
+        fields = ['name','temperature','image_url'] 
+
 
 class PlantsSerializer(serializers.ModelSerializer):
     name = PlantsInfoPartSerializer() #연결된 PlantsInfo에서 name과 temperature 가져오기

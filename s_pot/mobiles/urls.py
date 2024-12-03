@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('api/login/', views.login_user, name='login_user'),
@@ -14,3 +16,7 @@ urlpatterns = [
     path('api/getWateringFrequency/<str:plant_name>/', views.get_watering_frequency, name='get_watering_frequency'),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

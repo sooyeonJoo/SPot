@@ -11,7 +11,7 @@ class PlantsAdmin(admin.ModelAdmin):
 
 @admin.register(PlantsInfo)
 class PlantsInfoAdmin(admin.ModelAdmin):
-    list_display = ('name', 'engname', 'lifespan', 'sunlight', 'species', 'blooming_season', 'cultivation_season', 'harvesting_season', 'watering_frequency', 'temperature', 'pests_diseases')
+    list_display = ('name', 'engname', 'lifespan', 'sunlight', 'species', 'blooming_season', 'cultivation_season', 'harvesting_season', 'watering_frequency', 'temperature', 'pests_diseases','image_url')
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

@@ -34,7 +34,7 @@ class Plants(models.Model):
     wateringInterval = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'plants'
         verbose_name_plural = 'plants'        
 
@@ -51,11 +51,14 @@ class PlantsInfo(models.Model):
     watering_frequency = models.CharField(max_length=100, blank=True, null=True)
     temperature = models.CharField(max_length=50, blank=True, null=True)
     pests_diseases = models.CharField(max_length=50, blank=True, null=True)
-
+    image_url = models.URLField(max_length=255, blank=True, null=True)
+    image = models.ImageField(upload_to='plants/', blank=True, null=True)
+    
     class Meta:
-        managed = False
+        managed = False 
         db_table = 'plants_info'
         verbose_name_plural = 'plants_info'
+
 
 
 class User(models.Model):
@@ -76,7 +79,7 @@ class User(models.Model):
 
 class Wateringcalendar(models.Model):
     calendarid = models.AutoField(db_column='calendarId',primary_key=True)  # 새로운 AutoField를 기본 키로 설정
-    plantsid = models.ForeignKey(Plants, models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
+    plantsid = models.ForeignKey('Plants', models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
     userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
     date = models.DateField()  # date는 기본 키가 아니므로 그냥 필드로 설정
 
@@ -88,8 +91,8 @@ class Wateringcalendar(models.Model):
 
 class Wateringschedule(models.Model):
     scheduleid = models.AutoField(db_column='scheduleId',primary_key=True)  # 새로운 AutoField를 기본 키로 설정
-    plantsid = models.ForeignKey(Plants, models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
-    userid = models.ForeignKey(User, models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
+    plantsid = models.ForeignKey('Plants', models.DO_NOTHING, db_column='plantsId')  # Field name made lowercase.
+    userid = models.ForeignKey('User', models.DO_NOTHING, db_column='userId')  # Field name made lowercase.
     date = models.DateField()  # date는 기본 키가 아니므로 그냥 필드로 설정
 
     class Meta:
