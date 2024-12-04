@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import time
 from .models import PlantsInfo  # Django 데이터베이스 모델from bs4 import BeautifulSoup
+from .image_down import download_image_to_media
 
 # 로거 설정
 logger = logging.getLogger(__name__) #콘솔창에 흔적 남김
@@ -170,6 +171,8 @@ def crawl_and_save_plant(plant_name):
         image_url=plant_info['image_url']
     )
     plant_info_db.save()
+
+    download_image_to_media(plant_info_db)
 
     driver.quit()
 

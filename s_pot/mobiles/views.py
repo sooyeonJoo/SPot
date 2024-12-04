@@ -102,7 +102,7 @@ def send_plant_data(request):
         color = request.data.get('color')
         watering_days = request.data.get('wateringDays')
         plant_name = request.data.get('name')
-        user_id = 1
+        user_id = 2
         
 
         # 유효성 검사
