@@ -2,9 +2,9 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .crawler import crawl_and_save_plant
-from .models import User, PlantsInfo, Plants, Wateringschedule
+from .models import User, PlantsInfo, Plants, Wateringcalendar, Wateringschedule
 import logging
-from .serializers import UserSerializer, PlantsSerializer
+from .serializers import UserSerializer, PlantsSerializer, WateringcalendarSerializer, WateringscheduleSerializer
 from rest_framework import status
 from schedules.waterdbmanage import save_watering_data_and_schedule_update  # waterdbmanager에서 함수 import
 from django.utils import timezone
@@ -204,6 +204,21 @@ def get_plant_info(request):
             return JsonResponse({'error': 'Plant not found'}, status=404)
     else:
         return JsonResponse({'error': 'Plant name is required'}, status=400)    
-    
 
+
+@api_view(['GET'])
+def get_calendar_dates(request):
+    # 날짜 목록을 가져옵니다.
+    wateringcalendar_dates = Wateringcalendar.objects.all()
+    # wateringschedule_dates = Wateringschedule.objects.all()
+    
+    # 날짜를 리스트로 변환
+    dates = []
+    for item in wateringcalendar_dates:
+        dates.append(item.date)
+    # for item in wateringschedule_dates:
+    #     dates.append(item.date)
+    
+    # 날짜를 JSON 형태로 반환
+    return Response({'dates': dates})
 

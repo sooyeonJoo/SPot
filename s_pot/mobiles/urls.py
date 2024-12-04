@@ -15,6 +15,7 @@ urlpatterns = [
     path('api/sendWaterSchduleData/', views.send_watering_schedule, name='send_watering_schedule'),
     path('api/getWateringFrequency/<str:plant_name>/', views.get_watering_frequency, name='get_watering_frequency'),
 
+    path('api/calendarDates/', views.get_calendar_dates, name='get_calendar_dates'),
 ]
 
 if settings.DEBUG:
