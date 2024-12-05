@@ -178,6 +178,7 @@ def get_watering_frequency(request, plant_name):
 
 
 #activity_info.xml에식물 정보 불러오는거
+@api_view(['GET'])
 def get_plant_info(request):
     plant_name = request.GET.get('plantName', None)  # 쿼리 파라미터에서 plantName 가져오기
     
@@ -198,12 +199,14 @@ def get_plant_info(request):
                 'watering_frequency': plant.watering_frequency,
                 'temperature': plant.temperature,
                 'pests_diseases': plant.pests_diseases,
+                'image_url': plant.image.url if plant.image else None  # 이미지 URL 그대로 사용
             }
             return JsonResponse(response_data)
         except PlantsInfo.DoesNotExist:
             return JsonResponse({'error': 'Plant not found'}, status=404)
     else:
-        return JsonResponse({'error': 'Plant name is required'}, status=400)    
+        return JsonResponse({'error': 'Plant name is required'}, status=400)
+   
 
 
 @api_view(['GET'])

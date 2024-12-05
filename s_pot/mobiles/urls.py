@@ -18,6 +18,4 @@ urlpatterns = [
     path('api/calendarDates/', views.get_calendar_dates, name='get_calendar_dates'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
